@@ -52,6 +52,7 @@ export interface ModelConstants {
   unknown_age_days: number;
 }
 
+// Base is TVL times the base multiple, growth multiplies by the clamped seven-day change, maturity multiplies by age, and no protocol name is special-cased.
 export const MODEL: ModelConstants = {
   base_multiple: 0.25,
   growth_weight: 0.5,

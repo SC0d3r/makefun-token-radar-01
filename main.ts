@@ -1,3 +1,8 @@
+// Entry: token-radar-01.
+//
+// The board covers every watchlist protocol, ranks pre-token protocols by implied value, keeps
+// live-token protocols apart, and writes board.json, data.js, the dashboard and the dossier.
+//
 // A working token-radar-01 entry (Node 22, standard library only).
 //
 // The program reads the sealed snapshot from /input/snapshot.json (or --input <file|dir>), scores every
