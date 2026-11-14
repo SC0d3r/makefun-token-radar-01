@@ -491,7 +491,8 @@
     const protocol = el('td', 'col-protocol');
     const nameLine = el('div', 'protocol-name', row.name);
     const chainLine = el('div', 'protocol-chains', chainText(row.chains));
-    add(protocol, nameLine, chainLine);
+    const farmLine = el('div', 'protocol-farm', row.farm_hint);
+    add(protocol, nameLine, chainLine, farmLine);
 
     const category = el('td', 'col-category');
     add(category, el('span', 'chip', categoryText(row)));

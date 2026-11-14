@@ -138,6 +138,7 @@ export interface BoardRow {
   implied_value_usd: number;
   farm: FarmStep[];
   farm_steps: string[];
+  farm_hint: string;
 }
 
 /** The dashboard's view of one row: the same factors plus the farm plan as objects. */
@@ -166,6 +167,7 @@ export interface RadarRow {
   implied_value_usd: number;
   farm: FarmStep[];
   farm_steps: string[];
+  farm_hint: string;
 }
 
 /** A live-token protocol: the market's own multiple, never ranked against pre-token protocols. */
@@ -410,6 +412,7 @@ export function buildBoard(snapshot: Snapshot, model: ModelConstants = MODEL): B
       implied_value_usd: result.implied,
       farm,
       farm_steps: farm.map(stepText),
+      farm_hint: farmHint(protocol, result.age),
     };
   });
 }
@@ -499,6 +502,26 @@ function actionFor(p: SnapshotProtocol, capital: number, chain: string): string 
   }
   if (c.includes('launchpad')) return `Commit ${amount} of USDC to one launch on ${name} and keep the allocation receipt.`;
   return `Deposit ${amount} of USDC into ${name} on ${chain}, use one core action, and keep the position open.`;
+}
+
+/** The same category action, compressed to one board line: what to do and how long to hold it. */
+function farmHint(p: SnapshotProtocol, age: number | null): string {
+  const c = (p.category ?? '').toLowerCase();
+  const hold = holdDaysFor(age);
+  let label: string;
+  if (c.includes('prediction')) label = 'Fund USDC, one position';
+  else if (c.includes('insurance')) label = 'Buy cover, keep receipt';
+  else if (c.includes('rwa')) label = 'Mint yield asset, keep receipt';
+  else if (c.includes('bridge') || c.includes('cross chain')) label = 'Bridge USDC, use once';
+  else if (c.includes('stable')) label = 'Mint stable, keep open';
+  else if (c.includes('lend') || c.includes('cdp') || c.includes('collateral') || c.includes('credit')) label = 'Supply, borrow, keep open';
+  else if (c.includes('staking') || c.includes('restak')) label = 'Stake, keep receipt';
+  else if (c.includes('derivative') || c.includes('perpetual') || c.includes('option') || c.includes('synthetic') || c.includes('basis')) label = 'Margin, one hedged position';
+  else if (c.includes('curator') || c.includes('allocator') || c.includes('liquidity manager')) label = 'Vault deposit, keep shares';
+  else if (c.includes('dex') || c.includes('farm') || c.includes('yield') || c.includes('leverage')) label = 'Provide liquidity, keep open';
+  else if (c.includes('launchpad')) label = 'Commit USDC, keep allocation';
+  else label = 'Deposit USDC, one action';
+  return `${label}, hold ${hold}d`;
 }
 
 /**
@@ -591,6 +614,7 @@ export function radarRow(row: BoardRow): RadarRow {
     implied_value_usd: row.implied_value_usd,
     farm: row.farm,
     farm_steps: row.farm_steps,
+    farm_hint: row.farm_hint,
   };
 }
 
